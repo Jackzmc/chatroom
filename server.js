@@ -75,6 +75,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		return;
 	});
 	socket.on('join',function(data) {
+		data = escapeHtml(data);
 		socket.username = data;
 		users.push({
 			user: data,
@@ -91,13 +92,17 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		
 	});
   socket.on('message', function (message) { //get message from client, broadcast back to client... now that i realize it... i could just done broadcast clientside, but eh?
+		if(message.trim().length === 0) return false;
+		message = message.trim().slice(0,1000)
+		message = escapeHtml(message);
 		if(socket.username.toLowerCase() !== "server") {
 			if(available_rooms[socket.room] && !chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
 			}
 			chat[socket.room].messages.push({
 				user:socket.username,
-				message
+				message,
+				timestamp:new Date()
 			})
 			socket.broadcast.to(socket.room).emit('message',{user:socket.username,message,timestamp:new Date()})
 			//chat.push(data); //stores message into variable that will reset on reload of node, currently only used for the last 5 messages on new user... should probably delete old ones... later
@@ -105,6 +110,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		//socket.broadcast.emit('message',data);
   });
 	socket.on('cmd', function (data) {
+		console.info(`[Cmd] ${data}`)
 		var callback = {};
 		if(data == "users") {
 			callback.type = "users";
@@ -132,3 +138,12 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 setInterval(function() { //every 5s, send user amount to all users
 	io.sockets.emit('usercount',users);
 },5000);
+
+function escapeHtml(text) {
+	return text
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
+  }
