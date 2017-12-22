@@ -1,0 +1,223 @@
+<html>
+<head>
+    <!-- Written by Jackz (me@jackz.me) @ https://jackz.me -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+	<title>Nullify Chat V{{version}}</title>
+	<meta name="og:description" value="Chatroom for Nullify. Nullify is a mod menu for Grand Theft Auto V Online">
+	<meta name="og:title" value="Nullify Chatroom">
+	<meta name="description" value="Chatroom for Nullify. Nullify is a mod menu for Grand Theft Auto V Online">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <style>
+    #input-zone {
+        width:100%;
+        position:fixed;
+        bottom:25px;
+        text-align:center;
+        z-index:9999;
+    }
+    #input-zone-parent {
+        margin:0 auto;
+        position:fixed;
+    }
+    #chatsend {
+        display:inline-block;
+        width:50%;
+    }
+    body {
+        background: url('/img/light_grey.png')
+    }
+    .alertify-logs {
+        position: fixed;
+        bottom: 10px !important;
+        right: 10px !important;
+    }
+    /*#chat_list {
+       margin-top:10px;
+       overflow:auto;
+       display:block;
+    }
+    #chat_list_container {
+        height:80%;
+        position: absolute;
+        margin: 0 auto;
+        top:35px;
+    }*/
+
+    </style>
+</head>
+<body>
+<br>
+
+
+<Div class="container-fluid">
+    <div class="row">
+        <div id='chat_list_continer' class="col-lg-10">
+            <ul id='chat_list' class="list-group"></ul>
+        
+        </div>
+        <div class="col-md-2">
+            <h4>Connected Users (<span id='usercount'>0</span>)</h4>
+            <ul id='connecteduserlist' class="list-group">
+            </ul>
+        </div>
+        
+        
+    </div>
+</Div>
+    
+    
+
+
+<div id='input_zone_parent' class="row text-center">
+    <div id='input-zone'>
+        <input class="form-control" type="text" id="chatsend" placeholder="Send a message to #general" />
+        <span id='info'></span>
+    </div>
+</div>
+	
+	
+<!-- scripts -->
+<script src="/socket.io/socket.io.js"></script>
+<script src="/js/chance.min.js"></script>
+<script src="https://cdn.rawgit.com/alertifyjs/alertify.js/v1.0.10/dist/js/alertify.js"></script>
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script>
+let user;
+const socket = io.connect({
+    reconnection: true,
+    reconnectionDelay: 1000,
+    reconnectionDelayMax : 5000,
+    reconnectionAttempts: 99999
+}); //Connect to server
+let connectedbefore = false; //check if user has been actually connected before (or HAS joined)
+
+let current_channel = "general";
+
+$(document).ready(function(){  //get user logged in
+	//var userp = prompt("Please choose a username");
+    user = chance.first();
+    socket.emit('join',user)
+    socket.emit('channelSwitch',current_channel);
+    alertify.success(`You have joined #${current_channel}`);
+	$('#info').html(`<b>@${user}</b> on <b>#${current_channel}</b>`);
+    connectedBefore = true;
+    
+
+});
+
+window.onbeforeunload = function (e) { //log user out
+	socket.emit('quit',user);
+}
+
+
+/*check if socket disconnect*/
+socket.on('connect',function(data) {
+    
+	if(connectedbefore){
+		alertify
+			.delay(10000).success(`Reconnected to ${current_channel}`)
+			.reset();
+		if(user !== undefined || user !== "") {
+			socket.emit('join',user); //reconnect user, when socket joins AFTER they actually did this already
+            socket.emit('channelSwitch',current_channel);
+		}
+		$('#chatsend').prop("disabled", false); 
+        return;
+	}
+    
+});
+socket.on('disconnect', function(data) {
+	alertify
+		.closeLogOnClick(true)
+		.maxLogItems(1)
+		.delay(0).error("Lost connection to server");
+	$('#chatsend').prop("disabled", true); 
+});
+
+/*logged in part */
+
+$("#chatsend").on('keyup', function (e) {
+	if (e.keyCode == 13 && user !== undefined) {
+        console.log('attempt')
+		const val = document.getElementById('chatsend').value;
+		if(val.length <= 0) return;
+
+		if(val.charAt(0) == "/") {
+			//command
+			var cmd = val.split(" "); //split by space, remove !
+			cmd = cmd[0].substr(1); 
+            if(cmd) return socket.emit('cmd',cmd);
+			/*if(cmd == "users") {
+				 //send a cmd of users
+			}*/
+			 //above code could be used, but send cmd
+		}else{
+			socket.emit('message',val); //send data to server (could broadcast eh)
+			
+            document.getElementById('chat_list').innerHTML +=
+            `<li class="list-group-item list-group-item-success flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><b class="mb-1">${user}</b> <small class="text-muted">now</small></div><p class="mb-1">${val}</p></li>`;
+			/*var li = document.createElement("li"); //create the LI
+			var strong = document.createElement("strong");
+			strong.appendChild(document.createTextNode("You "));
+			li.appendChild(strong);
+			li.appendChild(document.createTextNode(data['message']));
+			if(data['user'] === "Server") {
+				li.setAttribute("class","list-group-item alert list-group-item-info"); 
+			}else{
+				li.setAttribute("class","list-group-item alert list-group-item-success"); 
+			}
+			document.getElementById('chat_list').append(li)*/
+			
+			document.getElementById('chatsend').value = "";
+		}
+	}
+});
+// creating a new websocket
+
+// on every message recived we print the new datas inside the #container div
+socket.on('cmd', function (data) {
+	document.getElementById('chatsend').value = "";
+	if(data.type == "users") {
+		var userlist;
+		for(var i=0;i<data.msg.length;i++) {
+			if(i==0) {
+				userlist = data.msg[i]['user'];
+			}else{
+				userlist += ", " + data.msg[i]['user'];
+			}	
+		}
+		alert("Users: " + userlist);
+	}else{
+		alert("Unknown or invalid command. ");
+	}
+});
+socket.on('message', function (data) {
+	let user = (data.server) ? '[Server]':data.user;
+    let className = (data.server) ? "list-group-item-info":"";
+    if(data.server) {
+        return document.getElementById('chat_list').innerHTML += `<li class="list-group-item ${className}"><b class="mb-1">[Server]</b> ${data.message}</li>`;
+    }
+    document.getElementById('chat_list').innerHTML += `<li class="list-group-item ${className} flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><b class="mb-1">${user}</b>  <small class="text-muted">${data.timestamp}</small></div><p class="mb-1">${data.message}</p></li>`;
+});
+socket.on('usercount',function(data){
+	document.getElementById('connecteduserlist').innerHTML = "";
+	for(var i=0;i<data.length;i++) {
+		var li = document.createElement("li"); //create the LI
+		li.setAttribute("class","list-group-item"); 
+		if(data[i]['user'] !== "Server") {
+			li.appendChild(document.createTextNode(data[i]['user']));
+		}
+		document.getElementById('connecteduserlist').append(li)
+	}
+	
+	document.getElementById('usercount').innerHTML = data.length;
+});
+function makeServerMessage(msg) {
+	
+}
+</script>
+</body>
+</html>

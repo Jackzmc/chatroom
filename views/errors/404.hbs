@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>404 Page Not Found</title>
+    {{>head}}
+</head>
+<body>
+
+<div class="jumbotron jumbotron-fluid text-center">
+    <h1 class="display-3">404 - Couldn't find that</h1>
+    <p class="lead">The specified page <i>{{path}}</i> doesnt seem to exist.<br>
+    Either the URL has been deleted, or an invalid path/page.
+    </p>
+    <hr class="my-4">
+    <p class="lead">
+        <a class="btn btn-primary btn-lg" href="/" role="button">Home</a>
+        <a class="btn btn-secondary btn-lg" onclick="window.history.back();" href="#" role="button">Previous Page</a>
+    </p>
+</div>
+
+{{>scripts}}
+</body>
+</html>
