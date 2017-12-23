@@ -2,120 +2,17 @@
 <head>
     <!-- Written by Jackz (me@jackz.me) @ https://jackz.me -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-	<title>Nullify Chat V{{version}}</title>
+	<link rel="stylesheet" href="/css/index.css">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
+    <link rel="shortcut icon" type"image/png" href="favicon.png">
+    <title>Nullify Chat V{{version}}</title>
     <meta name="og:type" content="website">
     <meta name="og:url" content="https://nullifygta.com">
 	<meta name="og:description" value="Chatroom for Nullify GTA V menu">
 	<meta name="og:title" value="Nullify Chatroom">
 	<meta name="description" value="Chatroom for Nullify GTA V menu">
     <meta charset="utf-8">
-    <link rel="shortcut icon" type"image/png" href="favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
-    <style>
-    html,body {
-        color: white;
-        background: url('/img/footer_lodyas.png')
-    }
-    #input-zone {
-        width:100%;
-        position:fixed;
-        bottom:2.5%;
-        left:10px !important;
-        z-index:9999;
-    }
-
-    #chatsend {
-        margin-left:100px;
-        display:inline-block;
-        width:80%;
-        height:50px;
-    }
-    #info {
-        position:absolute;
-        margin-bottom: 0;
-        padding: 5px;
-        display:inline-block;
-    }
-    
-    #chat_list {
-        overflow-y:scroll;
-        overflow-x:hidden;
-        position:absolute;
-        height:600px;
-        width:95%;
-        margin-left:5pt;
-        margin-bottom:35px;
-        margin-right:20px;
-    }
-    .alertify-logs {
-        position: fixed;
-        bottom: 10px !important;
-        right: 10px !important;
-    }
-
-    .chat li.list-group-item {
-        margin:0px;
-        padding:0px;
-        word-wrap:break-word;
-    }
-
-    .sidenav {
-        height: 100%; /* 100% Full-height */
-        width: 0; /* 0 width - change this with JavaScript */
-        position: fixed; /* Stay in place */
-        z-index: 1; /* Stay on top */
-        top: 0; /* Stay at the top */
-        right: 0;
-        background-color: #111; /* Black*/
-        overflow-x: hidden; /* Disable horizontal scroll */
-        padding-top: 60px; /* Place content 60px from the top */
-        transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
-    }
-    .sidenav a {
-
-    }
-
-    .sidenav .closebtn {
-        position: absolute;
-        top: 0;
-        right: 25px;
-        font-size: 36px;
-        margin-left: 50px;
-    }
-    @media screen and (max-height: 450px) {
-        .sidenav {padding-top: 15px;}
-        .sidenav a {font-size: 18px;}
-    }
-
-    .toggleButtons {
-        word-wrap:break-word;
-        position: absolute;
-        right:5px;
-        top:1em;
-        font-size:2em;
-        
-    }
-    .toggleButtons a {
-        padding: 5px;
-    }
-    #channelButton{
-        color:#1967e5;
-    }
-    #memberButton {
-        color:white;
-    }
-    #settingsBtn {
-        color: black;
-    }
-    .channel {
-        color:#1967e5;
-    }
-    .current {
-        font-weight: bold;
-    }
-
-    </style>
 </head>
 <body>
 <br>
@@ -133,9 +30,9 @@
     </div>
 </div>
 <div class="toggleButtons">
-    <a id='memberButton' href="#" onclick="toggleNav('memberlist')"><i class="fas fa-users"></i></a><br>
-    <a id='channelButton' href="#" onclick="toggleNav('channels')"><i class="fas fa-hashtag"></i></a><br>
-    <a id='settingsBtn' href="#" onclick="toggleNav('settings',275)"><i class="fas fa-cog"></i></a>
+    <a id='memberButton'  href="#memberlist" onclick="toggleNav('memberlist')"><i class="fas fa-users"></i></a><br>
+    <a id='channelButton'  href="#channels" onclick="toggleNav('channels')"><i class="fas fa-hashtag"></i></a><br>
+    <a id='settingsBtn' href="#settings" onclick="toggleNav('settings',275)"><i class="fas fa-cog"></i></a>
 </div>
 
 

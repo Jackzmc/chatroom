@@ -1,0 +1,110 @@
+html,body {
+    color: white;
+    background: url('/img/footer_lodyas.png')
+}
+#input-zone {
+    width:100%;
+    position:fixed;
+    bottom:2.5%;
+    left:10px !important;
+    z-index:9999;
+}
+
+#chatsend {
+    margin-left:100px;
+    display:inline-block;
+    width:80%;
+    height:50px;
+}
+#info {
+    position:absolute;
+    margin-bottom: 0;
+    padding: 5px;
+    display:inline-block;
+}
+
+#chat_list {
+    overflow-y:scroll;
+    overflow-x:hidden;
+    position:absolute;
+    height:600px;
+    width:95%;
+    margin-left:5pt;
+    margin-bottom:35px;
+    margin-right:20px;
+}
+.alertify-logs {
+    position: fixed;
+    bottom: 10px !important;
+    right: 10px !important;
+}
+
+.chat li.list-group-item {
+    margin:0px;
+    padding:0px;
+    word-wrap:break-word;
+}
+
+.sidenav {
+    height: 100%; /* 100% Full-height */
+    width: 0; /* 0 width - change this with JavaScript */
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Stay on top */
+    top: 0; /* Stay at the top */
+    right: 0;
+    background-color: #111; /* Black*/
+    overflow-x: hidden; /* Disable horizontal scroll */
+    padding-top: 60px; /* Place content 60px from the top */
+    transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+}
+.sidenav a {
+    
+}
+
+.sidenav .closebtn {
+    position: absolute;
+    top: 0;
+    right: 25px;
+    font-size: 36px;
+    margin-left: 50px;
+}
+@media screen and (max-height: 450px) {
+    .sidenav {padding-top: 15px;}
+    .sidenav a {font-size: 18px;}
+}
+
+.toggleButtons {
+    word-wrap:break-word;
+    position: absolute;
+    right:5px;
+    top:1em;
+    font-size:2em;
+    
+}
+.toggleButtons a {
+    padding: 5px;
+}
+#memberButton:hover{
+    color:#ddd
+}
+#memberButton {
+    color:white;
+}
+a#channelButton:hover{
+    color:#83adf2;
+}
+#channelButton{
+    color:#1967e5;
+}
+#settingsBtn:hover {
+    color:#1a1a1a;
+}
+#settingsBtn {
+    color: black;
+}
+.channel {
+    color:#1967e5;
+}
+.current {
+    font-weight: bold;
+}
