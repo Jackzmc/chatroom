@@ -26,6 +26,5 @@ typings/
 .vscode
 *.example
 
-config.json
 config/
 sessions

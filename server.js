@@ -1,5 +1,6 @@
 const express = require('express');  
 const exphbs = require('express-handlebars');
+const favicon = require('serve-favicon');
 const path = require('path');
 
 const config = require('./config');
@@ -34,6 +35,7 @@ app.use((error, req, res, next) => {
     console.error(error.message)
     res.status(500).render('errors/general',{error:error.message,default:true})
 })
+app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(express.static(__dirname + '/public'));
 app.use('/',(req,res) => {
 	//let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
@@ -65,6 +67,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 			}
 			const lastmessages = chat[socket.room].messages.slice(chat[socket.room].messages.length - 5)
 			lastmessages.forEach(v => {
+				v.previous = true;
 				socket.emit('message',v)
 			})
 			
@@ -84,7 +87,6 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 
 		console.log(`[Log] ${data} joined`);
 		if(!socket.room || !available_rooms[socket.room]) return;
-		
 		socket.emit('usercount',users);
 		
 		//socket.broadcast.emit('message',data); //broadcast message that user joined (client will do it for themselves)
@@ -95,6 +97,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		if(message.trim().length === 0) return false;
 		message = message.trim().slice(0,1000)
 		message = escapeHtml(message);
+		console.log(message)
 		if(socket.username.toLowerCase() !== "server") {
 			if(available_rooms[socket.room] && !chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
@@ -114,7 +117,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		var callback = {};
 		if(data == "users") {
 			callback.type = "users";
-			callback.msg = users;
+			callback.msg = users.map(v => v.user);
 			socket.emit('cmd',callback);
 		}else{
 			callback.type = "error";

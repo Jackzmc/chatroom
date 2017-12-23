@@ -3,34 +3,50 @@
     <!-- Written by Jackz (me@jackz.me) @ https://jackz.me -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 	<title>Nullify Chat V{{version}}</title>
-	<meta name="og:description" value="Chatroom for Nullify. Nullify is a mod menu for Grand Theft Auto V Online">
+    <meta name="og:type" content="website">
+    <meta name="og:url" content="https://nullifygta.com">
+	<meta name="og:description" value="Chatroom for Nullify GTA V menu">
 	<meta name="og:title" value="Nullify Chatroom">
-	<meta name="description" value="Chatroom for Nullify. Nullify is a mod menu for Grand Theft Auto V Online">
+	<meta name="description" value="Chatroom for Nullify GTA V menu">
     <meta charset="utf-8">
+    <link rel="shortcut icon" type"image/png" href="favicon.png">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
     <style>
+    html,body {
+        color: white;
+        background: url('/img/footer_lodyas.png')
+    }
     #input-zone {
         width:100%;
         position:fixed;
-        bottom:25px;
-        text-align:center;
+        bottom:2.5%;
+        left:10px !important;
         z-index:9999;
     }
-    #input-zone-parent {
-        margin:0 auto;
-        position:fixed;
-    }
+
     #chatsend {
+        margin-left:100px;
         display:inline-block;
-        width:50%;
+        width:80%;
+        height:50px;
     }
-    body {
-        background: url('/img/light_grey.png')
-    }
-    #chat_send {
-        overflow-y:scroll;
+    #info {
         position:absolute;
-        margin-bottom:50px;
+        margin-bottom: 0;
+        padding: 5px;
+        display:inline-block;
+    }
+    
+    #chat_list {
+        overflow-y:scroll;
+        overflow-x:hidden;
+        position:absolute;
+        height:600px;
+        width:95%;
+        margin-left:5pt;
+        margin-bottom:35px;
+        margin-right:20px;
     }
     .alertify-logs {
         position: fixed;
@@ -39,63 +55,99 @@
     }
 
     .chat li.list-group-item {
-       margin:5px;
+        margin:0px;
+        padding:0px;
         word-wrap:break-word;
     }
-    
-    /*#chat_list {
-       margin-top:10px;
-       overflow:auto;
-       display:block;
+
+    .sidenav {
+        height: 100%; /* 100% Full-height */
+        width: 0; /* 0 width - change this with JavaScript */
+        position: fixed; /* Stay in place */
+        z-index: 1; /* Stay on top */
+        top: 0; /* Stay at the top */
+        right: 0;
+        background-color: #111; /* Black*/
+        overflow-x: hidden; /* Disable horizontal scroll */
+        padding-top: 60px; /* Place content 60px from the top */
+        transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
     }
-    #chat_list_container {
-        height:80%;
+    .sidenav a {
+
+    }
+
+    .sidenav .closebtn {
         position: absolute;
-        margin: 0 auto;
-        top:35px;
-    }*/
+        top: 0;
+        right: 25px;
+        font-size: 36px;
+        margin-left: 50px;
+    }
+    @media screen and (max-height: 450px) {
+        .sidenav {padding-top: 15px;}
+        .sidenav a {font-size: 18px;}
+    }
+
+    .toggleButtons {
+        word-wrap:break-word;
+        position: absolute;
+        right:5px;
+        top:1em;
+        font-size:2em;
+        
+    }
+    .toggleButtons a {
+        padding: 5px;
+    }
+    #channelButton{
+        color:#1967e5;
+    }
+    #memberButton {
+        color:white;
+    }
+    #settingsBtn {
+        color: black;
+    }
 
     </style>
 </head>
 <body>
 <br>
 
+<div id='chat_container'>
+    <ul id='chat_list' class="list-group text-dark"></ul>   
+</div>
+  
 
-<Div class="container-fluid">
-    <div class="row">
-        <div id='chat_list_continer' class="col-lg-10">
-            <ul id='chat_list' class="list-group"></ul>
-        
-        </div>
-        <div class="col-md-2 d-none d-sm-block d-md-block">
-            <h4>Connected Users (<span id='usercount'>0</span>)</h4>
-            <ul id='connecteduserlist' class="list-group">
-            </ul>
-        </div>
-        
-        
-    </div>
-</Div>
-    
-    
-
-
-<div id='input_zone_parent' class="row text-center">
+<div id='input_zone_parent'>
     <div id='input-zone'>
+        <span id='info' class='border border-success'>Connecting...</span>
         <input class="form-control" type="text" maxlength="2000" id="chatsend" placeholder="Send a message to #general" />
-        <span id='info'></span>
+        
     </div>
 </div>
-	
+<div class="toggleButtons">
+    <a id='memberButton' href="#" onclick="toggleNav('memberlist')"><i class="fas fa-users"></i></a><br>
+    <a id='channelButton' href="#" onclick="toggleNav('channels')"><i class="fas fa-hashtag"></i></a><br>
+    <a id='settingsBtn' href="#" onclick="toggleNav('settings')"><i class="fas fa-cog"></i></a>
+</div>
+
+
+<div id="memberlist" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('memberlist')">&times;</a>
+    <h4 class='text-center'>Members (<span id='usercount'>0</span>)</h4>
+    <ul id='connecteduserlist' class="list-group text-dark">
+    </ul>
+</div>
+
+<div class="alertify-logs"></div>
 	
 <!-- scripts -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/chance.min.js"></script>
 <script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.6/dist/showdown.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/datejs/1.0/date.min.js"></script>
 <script src="https://cdn.rawgit.com/alertifyjs/alertify.js/v1.0.10/dist/js/alertify.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 <script src="/js/index.js"></script>
 </body>

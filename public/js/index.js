@@ -1,8 +1,9 @@
 
 const output = document.getElementById('chat_list');
+const notification = new Audio('/msg.mp3')
 const markdown = new showdown.Converter({
     noHeaderId:true,
-    simplifiedAutoLink:true,
+    //simplifiedAutoLink:true,
     headerLevelStart:6,
     emoji:true,
     strikethrough:true
@@ -13,35 +14,39 @@ const socket = io.connect({
     reconnectionDelayMax : 5000,
     reconnectionAttempts: 99999
 }); //Connect to server
+alertify.parent(document.getElementById('alertify-logs'))
 let user;
 let connectedbefore = false; //check if user has been actually connected before (or HAS joined)
-
+let settings = {
+    sounds:true,
+    compactMode:false
+}
 let current_channel = "general";
 
-$(document).ready(function(){  //get user logged in
+$(document).ready(() => {  //get user logged in
 	//var userp = prompt("Please choose a username");
     user = chance.first();
     socket.emit('join',user)
     socket.emit('channelSwitch',current_channel);
+    alertify.logPosition('bottom right')
     alertify.success(`You have joined #${current_channel}`);
-	$('#info').html(`<b>@${user}</b> on <b>#${current_channel}</b>`);
+	$('#info').html(`<b>@${user}</b><br>#${current_channel}`);
     connectedBefore = true;
     
 
 });
 
-window.onbeforeunload = function (e) { //log user out
-	socket.emit('quit',user);
+window.onbeforeunload = e => { //log user out
+	//socket.emit('quit',user);
 }
-
-
 /*check if socket disconnect*/
-socket.on('connect',function(data) {
+socket.on('connect',data => {
     
 	if(connectedbefore){
-		alertify
-			.delay(10000).success(`Reconnected to ${current_channel}`)
-			.reset();
+        alertify.logPosition('bottom right')
+        alertify.delay(10000)
+        .success(`Reconnected to ${current_channel}`)
+        .reset()
 		if(user !== undefined || user !== "") {
 			socket.emit('join',user); //reconnect user, when socket joins AFTER they actually did this already
             socket.emit('channelSwitch',current_channel);
@@ -51,11 +56,12 @@ socket.on('connect',function(data) {
 	}
     
 });
-socket.on('disconnect', function(data) {
+socket.on('disconnect', data => {
+    alertify.logPosition('bottom right')
 	alertify
 		.closeLogOnClick(true)
 		.maxLogItems(1)
-		.delay(0).error("Lost connection to server");
+        .delay(0).error("Lost connection to server")
     $('#chatsend').prop("disabled", true); 
     setTimeout(window.location.reload(),5000)
 
@@ -63,7 +69,7 @@ socket.on('disconnect', function(data) {
 
 /*logged in part */
 
-$("#chatsend").on('keyup', function (e) {
+$("#chatsend").on('keyup', e => {
 	if (e.keyCode == 13 && user !== undefined) {
         if(document.getElementById('chatsend').value.trim().length === 0) return;
         sendMessage(document.getElementById('chatsend').value)
@@ -73,22 +79,30 @@ $("#chatsend").on('keyup', function (e) {
 // creating a new websocket
 
 // on every message recived we print the new datas inside the #container div
-socket.on('cmd', function (data) {
-	
+socket.on('cmd',(data) => {
+	if(data.type === "users") {
+        return alert(`Users: ${data.msg.join(", ")}`)
+    }
+    return console.warn('Recieved an unknown command response from server');
 });
 socket.on('message', (data) => {
     console.log(data)
+    if(!window.onfocus && !data.previous && document.readyState == 'complete' && settings.sounds) {
+        notification.play(); //revamp to not go off when reconnecting
+    }
 	let user = (data.server) ? '[Server]':data.user;
-    let className = (data.server) ? "list-group-item-info":"";
+    let className = (data.server) ? "list-group-item-info":(data.previous) ? 'list-group-item-secondary':'';
     if(data.server) {
         output.innerHTML += `<li class="list-group-item chat ${className}"><b class="mb-1">[Server]</b> ${data.message}</li>`;
-        return output.scrollTop = output.scrollHeight;
+        output.scrollTop = output.scrollHeight
+        return;
     }
+    data.message = escapeHtml(data.message);
     let time = new Date(data.timestamp)
     output.innerHTML += `<li class="list-group-item ${className} chat flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><b class="mb-1">${user}</b>  <small class="text-muted">${time}</small></div>${markdown.makeHtml(data.message)}</li>`;
-    return output.scrollTop = output.scrollHeight;
+    output.scrollTop = output.scrollHeight
 });
-socket.on('usercount',function(data){
+socket.on('usercount', data => {
 	document.getElementById('connecteduserlist').innerHTML = "";
 	for(var i=0;i<data.length;i++) {
 		var li = document.createElement("li"); //create the LI
@@ -101,6 +115,10 @@ socket.on('usercount',function(data){
 	
 	document.getElementById('usercount').innerHTML = data.length;
 });
+function switchChannel(channel) {
+    console.warn('Not available');
+    return false;
+}
 async function sendMessage(message) {
     if(message.trim().length <= 0) return false;
     if(message.length > 1000) {
@@ -117,11 +135,12 @@ async function sendMessage(message) {
 
         if(response) return response;
     }
-    message = escapeHtml(message.trim())
-    message = message = message.replace(/<[^>]+>/g, '');
+    //message = escapeHtml(message.trim())
+    //message = message = message.replace(/<[^>]+>/g, '');
     socket.emit('message',message); //send data to server (could broadcast eh)
     document.getElementById('chat_list').innerHTML +=
     `<li class="list-group-item chat list-group-item-success flex-column align-items-start"><div class="d-flex w-100 justify-content-between"><b class="mb-1">${user}</b> <small class="text-muted">now</small></div>${markdown.makeHtml(message)}</li>`;
+    output.scrollTop = output.scrollHeight;
     return true;
 }
 function processCommand(cmd,args) {
@@ -141,9 +160,6 @@ function processCommand(cmd,args) {
         return sendMessage(msg);
     }
 }
-function showServerMessage(msg) {
-	
-}
 
 function escapeHtml(text) {
 	return text
@@ -152,4 +168,13 @@ function escapeHtml(text) {
 		.replace(/>/g, "&gt;")
 		.replace(/"/g, "&quot;")
 		.replace(/'/g, "&#039;");
-  }
+}
+
+function toggleNav(element) {
+    let e = document.getElementById(element);
+    console.log(e.style.width)
+    if(e.style.width === "0px") {
+        return e.style.width = "250px";
+    }
+    e.style.width = "0";
+}
