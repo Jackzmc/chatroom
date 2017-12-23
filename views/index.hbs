@@ -108,6 +108,12 @@
     #settingsBtn {
         color: black;
     }
+    .channel {
+        color:#1967e5;
+    }
+    .current {
+        font-weight: bold;
+    }
 
     </style>
 </head>
@@ -129,7 +135,7 @@
 <div class="toggleButtons">
     <a id='memberButton' href="#" onclick="toggleNav('memberlist')"><i class="fas fa-users"></i></a><br>
     <a id='channelButton' href="#" onclick="toggleNav('channels')"><i class="fas fa-hashtag"></i></a><br>
-    <a id='settingsBtn' href="#" onclick="toggleNav('settings')"><i class="fas fa-cog"></i></a>
+    <a id='settingsBtn' href="#" onclick="toggleNav('settings',275)"><i class="fas fa-cog"></i></a>
 </div>
 
 
@@ -137,6 +143,23 @@
     <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('memberlist')">&times;</a>
     <h4 class='text-center'>Members (<span id='usercount'>0</span>)</h4>
     <ul id='connecteduserlist' class="list-group text-dark">
+    </ul>
+</div>
+<div id="channels" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('channels')">&times;</a>
+    <h4 class='text-center'>Channels<h4>
+    <div id='channelList' class="list-group text-dark"></div>
+</div>
+<div id="settings" class="sidenav text-center">
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('settings',275)">&times;</a>
+    <h4 class='text-center'>Settings<h4>
+    <p>Work in progress</p>
+    <small>Disable sound effects with browser, sorry</small>
+    <br><br>
+    <h5>Changelog</h5>
+    <ul class='align-left'>
+        <li>Added channels & switching</li>
+        <li>Settings navbar</li>
     </ul>
 </div>
 

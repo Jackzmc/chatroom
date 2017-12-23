@@ -8,12 +8,16 @@ const markdown = new showdown.Converter({
     emoji:true,
     strikethrough:true
 });
-const socket = io.connect({
-    reconnection: true,
-    reconnectionDelay: 1000,
-    reconnectionDelayMax : 5000,
-    reconnectionAttempts: 99999
-}); //Connect to server
+let socket;
+if(!botCheck()) {
+    socket = io.connect({
+        reconnection: true,
+        reconnectionDelay: 1000,
+        reconnectionDelayMax : 5000,
+        reconnectionAttempts: 99999
+    }); //Connect to server
+}
+
 alertify.parent(document.getElementById('alertify-logs'))
 let user;
 let connectedbefore = false; //check if user has been actually connected before (or HAS joined)
@@ -21,6 +25,7 @@ let settings = {
     sounds:true,
     compactMode:false
 }
+let rooms = [];
 let current_channel = "general";
 
 $(document).ready(() => {  //get user logged in
@@ -56,6 +61,12 @@ socket.on('connect',data => {
 	}
     
 });
+socket.on('init',data => {
+    rooms = data.channels;
+    console.info(`Found ${rooms.length} channels`)
+    const element = document.getElementById('channelList');
+    updateChannelList()
+})
 socket.on('disconnect', data => {
     alertify.logPosition('bottom right')
 	alertify
@@ -116,8 +127,22 @@ socket.on('usercount', data => {
 	document.getElementById('usercount').innerHTML = data.length;
 });
 function switchChannel(channel) {
-    console.warn('Not available');
-    return false;
+    current_channel = channel;
+    socket.emit('channelSwitch',channel)
+    $('#info').html(`<b>@${user}</b><br>#${channel}`);
+    document.getElementById('chatsend').placeholder = `Send a message to ${channel}`
+    updateChannelList();
+    return true;
+}
+function updateChannelList() {
+    const element = document.getElementById('channelList')
+    document.getElementById('channelList').innerHTML = "";
+    rooms.forEach(v => {
+        if(current_channel === v) {
+            return element.innerHTML += `<a class="list-group-item channel list-group-item-action list-group-item-primary current" href='#'>#${v}</a>`
+        }
+        element.innerHTML += `<a class="list-group-item list-group-item-action channel" href="#" onClick="switchChannel('${v}')">#${v}</a>`
+    })
 }
 async function sendMessage(message) {
     if(message.trim().length <= 0) return false;
@@ -170,11 +195,20 @@ function escapeHtml(text) {
 		.replace(/'/g, "&#039;");
 }
 
-function toggleNav(element) {
+function toggleNav(element,amount) {
     let e = document.getElementById(element);
-    console.log(e.style.width)
-    if(e.style.width === "0px") {
-        return e.style.width = "250px";
+    if(e.style.width === "0px" || !e.style.width) {
+        return e.style.width = `${amount|250}px`;
     }
     e.style.width = "0";
+}
+function botCheck(){
+	const botPattern = "(googlebot\/|Googlebot-Mobile|Googlebot-Image|Google favicon|Mediapartners-Google|bingbot|slurp|java|wget|curl|Commons-HttpClient|Python-urllib|libwww|httpunit|nutch|phpcrawl|msnbot|jyxobot|FAST-WebCrawler|FAST Enterprise Crawler|biglotron|teoma|convera|seekbot|gigablast|exabot|ngbot|ia_archiver|GingerCrawler|webmon |httrack|webcrawler|grub.org|UsineNouvelleCrawler|antibot|netresearchserver|speedy|fluffy|bibnum.bnf|findlink|msrbot|panscient|yacybot|AISearchBot|IOI|ips-agent|tagoobot|MJ12bot|dotbot|woriobot|yanga|buzzbot|mlbot|yandexbot|purebot|Linguee Bot|Voyager|CyberPatrol|voilabot|baiduspider|citeseerxbot|spbot|twengabot|postrank|turnitinbot|scribdbot|page2rss|sitebot|linkdex|Adidxbot|blekkobot|ezooms|dotbot|Mail.RU_Bot|discobot|heritrix|findthatfile|europarchive.org|NerdByNature.Bot|sistrix crawler|ahrefsbot|Aboundex|domaincrawler|wbsearchbot|summify|ccbot|edisterbot|seznambot|ec2linkfinder|gslfbot|aihitbot|intelium_bot|facebookexternalhit|yeti|RetrevoPageAnalyzer|lb-spider|sogou|lssbot|careerbot|wotbox|wocbot|ichiro|DuckDuckBot|lssrocketcrawler|drupact|webcompanycrawler|acoonbot|openindexspider|gnam gnam spider|web-archive-net.com.bot|backlinkcrawler|coccoc|integromedb|content crawler spider|toplistbot|seokicks-robot|it2media-domain-crawler|ip-web-crawler.com|siteexplorer.info|elisabot|proximic|changedetection|blexbot|arabot|WeSEE:Search|niki-bot|CrystalSemanticsBot|rogerbot|360Spider|psbot|InterfaxScanBot|Lipperhey SEO Service|CC Metadata Scaper|g00g1e.net|GrapeshotCrawler|urlappendbot|brainobot|fr-crawler|binlar|SimpleCrawler|Livelapbot|Twitterbot|cXensebot|smtbot|bnf.fr_bot|A6-Indexer|ADmantX|Facebot|Twitterbot|OrangeBot|memorybot|AdvBot|MegaIndex|SemanticScholarBot|ltx71|nerdybot|xovibot|BUbiNG|Qwantify|archive.org_bot|Applebot|TweetmemeBot|crawler4j|findxbot|SemrushBot|yoozBot|lipperhey|y!j-asr|Domain Re-Animator Bot|AddThis)";
+	let re = new RegExp(botPattern, 'i');
+	const userAgent = navigator.userAgent;
+	if (re.test(userAgent)) {
+		return true;
+	}else{
+		return false;
+	}
 }

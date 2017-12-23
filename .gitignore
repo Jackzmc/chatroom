@@ -26,5 +26,6 @@ typings/
 .vscode
 *.example
 
+changelog.json
 config/
 sessions

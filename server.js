@@ -46,7 +46,7 @@ app.get('*', function(req, res){
     res.status(404).render('errors/404',{path:req.path,layout:false})
 });
 
-let available_rooms = ["general","test"];
+let available_rooms = ["general","test","support"];
 const chat = {
 	general:{
 		users:[],
@@ -55,13 +55,18 @@ const chat = {
 }
 const users = [];
 io.sockets.on('connection', function (socket) { //server connection, not user connection(i think)
+	socket.emit('init',{
+		default_channel:available_rooms[0],
+		channels:available_rooms
+	})
 	socket.on('channelSwitch',(room) => {
 		if(available_rooms.indexOf(room) !== -1) {
 			socket.leave(socket.room);
 			socket.join(room)
 			socket.room = room;
+			if(available_rooms.indexOf(socket.room) === -1) return socket.emit('message',{server:true,error:true,message:'Specified channel does not exist'});
 			console.info(`[Log] ${socket.username} switched to #${room}`)
-			if(available_rooms[socket.room] && !chat[socket.room]) {
+			if(!chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
 				return socket.emit('message',{server:true,message:`Connected to #${room}`});
 			}
@@ -97,7 +102,6 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		if(message.trim().length === 0) return false;
 		message = message.trim().slice(0,1000)
 		message = escapeHtml(message);
-		console.log(message)
 		if(socket.username.toLowerCase() !== "server") {
 			if(available_rooms[socket.room] && !chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
@@ -144,9 +148,10 @@ setInterval(function() { //every 5s, send user amount to all users
 
 function escapeHtml(text) {
 	return text
-		.replace(/&/g, "&amp;")
-		.replace(/</g, "&lt;")
-		.replace(/>/g, "&gt;")
-		.replace(/"/g, "&quot;")
-		.replace(/'/g, "&#039;");
-  }
+	.replace(/&/g, "&amp;")
+	.replace(/</g, "&lt;")
+	.replace(/>/g, "&gt;")
+	.replace(/"/g, "&quot;")
+	.replace(/'/g, "&#039;");
+}
+
