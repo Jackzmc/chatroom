@@ -28,7 +28,7 @@ typings/
 
 favicon.png
 favicon.ico
-now.sh
+now.json
 
 nodemon.json
 config/
