@@ -3,10 +3,10 @@
     "env":{
         "NODE_ENV":"production"
     },
-    "public":true,
     "files":[
-        "public/favicon.png",
-        "public/favicon.ico",
-        "config.json"
+        "*.json",
+        "server.js",
+        "public/",
+        "views/"
     ]
 }

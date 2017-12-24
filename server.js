@@ -2,6 +2,7 @@ const express = require('express');
 const exphbs = require('express-handlebars');
 const favicon = require('serve-favicon');
 const path = require('path');
+const fs = require('fs')
 
 const config = require('./config');
 const changelog = require('./changelog')
@@ -36,7 +37,7 @@ app.use((error, req, res, next) => {
     console.error(error.message)
     res.status(500).render('errors/general',{error:error.message,default:true})
 })
-if(config.favicon) app.use(favicon(path.join(__dirname, 'public', config.favicon)))
+if(config.favicon && fs.existsSync(path.join(__dirname,'public',config.favicon))) app.use(favicon(path.join(__dirname, 'public', config.favicon)))
 app.use(express.static(__dirname + '/public'));
 app.use('/',(req,res) => {
 	//let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
