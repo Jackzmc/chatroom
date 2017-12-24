@@ -1,12 +1,9 @@
 {
     "port":8081,
-    "staff":{
-        "owner":[],
-        "mod":[],
-        "support":["117024299788926978"]
-    },
     "db":{
-        
+        "_notinuse":true
     },
+    "favicon":"/favicon.png",
+    "title":"Nullify Chat",
     "welcome_msg":"Welcome! I should probably change this msg, but nah"
 }

@@ -36,12 +36,12 @@ app.use((error, req, res, next) => {
     console.error(error.message)
     res.status(500).render('errors/general',{error:error.message,default:true})
 })
-app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
+if(config.favicon) app.use(favicon(path.join(__dirname, 'public', config.favicon)))
 app.use(express.static(__dirname + '/public'));
 app.use('/',(req,res) => {
 	//let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	const changes = changelog[changelog.length-1].changes.map(v => `<li>${v}</li>`).join("\n")
-	res.render('index',{version:package.version,changes,welcome:config.welcome_msg})
+	res.render('index',{version:package.version,changes,welcome:config.welcome_msg,favicon:config.favicon})
 })
 
 app.get('*', function(req, res){

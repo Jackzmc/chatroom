@@ -1,0 +1,11 @@
+{
+    "alias":"jackzmc-chatroom",
+    "env":{
+        "NODE_ENV":"production"
+    },
+    "files":[
+        "public/favicon.png",
+        "public/favicon.ico",
+        "config.json"
+    ]
+}

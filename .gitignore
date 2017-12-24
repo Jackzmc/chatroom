@@ -26,6 +26,10 @@ typings/
 .vscode
 *.example
 
+favicon.png
+favicon.ico
+now.sh
+
 nodemon.json
 config/
 sessions
