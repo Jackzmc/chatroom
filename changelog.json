@@ -16,5 +16,12 @@
             "New line/TextArea",
             "Images work & shown small"  
         ]
+    },
+    {
+        "version":"1.5.2",
+        "changes":[
+            "Added a loading screen",
+            "Added img meta tag"
+        ]
     }
 ]

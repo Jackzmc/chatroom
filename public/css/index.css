@@ -91,6 +91,7 @@ html,body {
 }
 .toggleButtons a {
     padding: 5px;
+    margin-right:1px;
 }
 #memberButton:hover{
     color:#ddd

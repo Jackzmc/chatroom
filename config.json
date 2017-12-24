@@ -6,7 +6,9 @@
     "info":{
         "title":"Nullify Chat",
         "url":"https://nullifygta.com",
+        "image":"/favicon.png",
         "description":"A chatroom for Nullify, a Grand Theft Auto V menu.",
+        "info":"This is information that you can share in the config.json. Like indy's nudes are stored in https://indyloves.men/nudes",
         "welcome_msg":"Welcome! I should probably change this msg, but nah"
     },
     "favicon":"/favicon.png"

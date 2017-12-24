@@ -51,12 +51,11 @@ $(document).ready(() => {  //get user logged in
     alertify.success(`You have joined #${current_channel}`);
 	$('#info').html(`<b>@${user}</b><br>#${current_channel}`);
     connectedBefore = true;
-    
-
+    return window.loading_screen.finish();
 });
 
 window.onbeforeunload = e => { //log user out
-	//socket.emit('quit',user);
+    //socket.emit('quit',user);
 }
 /*check if socket disconnect*/
 socket.on('connect',data => {
@@ -71,7 +70,6 @@ socket.on('connect',data => {
             socket.emit('channelSwitch',current_channel);
 		}
 		$('#chatsend').prop("disabled", false); 
-        return;
 	}
     
 });

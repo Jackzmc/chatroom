@@ -1,7 +1,8 @@
 <html>
 <head>
     <!-- Written by Jackz (me@jackz.me) @ https://jackz.me -->
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/please-wait/0.0.5/please-wait.min.css" integrity="sha256-+EVukertp+JNXktfbiOXsUjvPcnHOkkNkPixeI9mg1o=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 	<link rel='stylesheet' href='/css/simplebar.css'>
     <link rel="stylesheet" href="/css/index.css">
     <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
@@ -9,6 +10,7 @@
     <title>{{info.title}} V{{version}}</title>
     <meta name="og:type" content="website">
     {{#if info.url}} <meta name="og:url" content="{{info.url}}">{{/if}}
+    {{#if info.image}} <meta name="og:image" content="{{info.image}}">{{/if}}
 	<meta name="og:description" value="{{info.description}}">
 	<meta name="og:title" value="{{info.title}}">
 	<meta name="description" value="{{info.description}}">
@@ -16,6 +18,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
 <body>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/please-wait/0.0.5/please-wait.min.js" integrity="sha256-VdpyBKkQpTaeKm6ZDxHfYXrnZKY6J+uMp0Ok1wq4Nn4=" crossorigin="anonymous"></script>
+<script>
+    window.loading_screen = window.pleaseWait({
+        logo:"favicon.png",
+        backgroundColor:'#333',
+        loadingHtml:"<p class='loading-message'>Loading your drugs...</p>"
+    })
+</script>
 <br>
 
 <div id='chat_container'>
@@ -33,12 +43,18 @@
     </div>
 </div>
 <div class="toggleButtons">
+    <a id='infoBtn'  href="#info" onclick="toggleNav('infoZone')"><i class="fas fa-info"></i></a><br>
     <a id='memberButton'  href="#memberlist" onclick="toggleNav('memberlist')"><i class="fas fa-users"></i></a><br>
     <a id='channelButton'  href="#channels" onclick="toggleNav('channels')"><i class="fas fa-hashtag"></i></a><br>
     <a id='settingsBtn' href="#settings" onclick="toggleNav('settings',250)"><i class="fas fa-cog"></i></a>
 </div>
 
 
+<div id="infoZone" class="sidenav">
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('infoZone')">&times;</a>
+    <h4 class='text-center'>Information</h4>
+    {{info.info}}
+</div>
 <div id="memberlist" class="sidenav">
     <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('memberlist')">&times;</a>
     <h4 class='text-center'>Members (<span id='usercount'>0</span>)</h4>
