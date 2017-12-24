@@ -1,0 +1,20 @@
+[
+    {
+        "version":"1.4",
+        "changes":[
+            "Settings system",
+            "Combined messages"
+        ]
+    },
+    {
+        "version":"1.5",
+        "changes":[
+            "No duplicate joining",
+            "Fixed spacing",
+            "Links re-added & parsed correctly",
+            "Rainbow command of course" ,
+            "New line/TextArea",
+            "Images work & shown small"  
+        ]
+    }
+]
