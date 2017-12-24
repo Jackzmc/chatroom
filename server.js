@@ -41,7 +41,7 @@ app.use(express.static(__dirname + '/public'));
 app.use('/',(req,res) => {
 	//let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 	const changes = changelog[changelog.length-1].changes.map(v => `<li>${v}</li>`).join("\n")
-	res.render('index',{version:package.version,changes,welcome:config.welcome_msg,favicon:config.favicon})
+	res.render('index',{version:package.version,changes,favicon:config.favicon,info:config.info})
 })
 
 app.get('*', function(req, res){

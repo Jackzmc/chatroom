@@ -3,7 +3,11 @@
     "db":{
         "_notinuse":true
     },
-    "favicon":"/favicon.png",
-    "title":"Nullify Chat",
-    "welcome_msg":"Welcome! I should probably change this msg, but nah"
+    "info":{
+        "title":"Nullify Chat",
+        "url":"https://nullifygta.com",
+        "description":"A chatroom for Nullify, a Grand Theft Auto V menu.",
+        "welcome_msg":"Welcome! I should probably change this msg, but nah"
+    },
+    "favicon":"/favicon.png"
 }

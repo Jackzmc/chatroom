@@ -3,7 +3,11 @@
     "db":{
         "_notinuse":true
     },
-    "favicon":"/favicon.png",
-    "title":"Chatroom",
-    "welcome_msg":"Welcome! This is a welcome message"
+    "info":{
+        "title":"Chatroom",
+        "url":"https://github.com/Jackzmc/chatroom",
+        "description":"A socket.io chatroom written by jackzmc",
+        "welcome_msg":"Welcome! This is a welcome message"
+    },
+    "favicon":"/favicon.png"
 }

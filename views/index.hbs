@@ -6,12 +6,12 @@
     <link rel="stylesheet" href="/css/index.css">
     <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
     {{#if favicon}}<link rel="shortcut icon" type"image/png" href="{{favicon}}">{{/if}}
-    <title>Nullify Chat V{{version}}</title>
+    <title>{{info.title}} V{{version}}</title>
     <meta name="og:type" content="website">
-    <meta name="og:url" content="https://nullifygta.com">
-	<meta name="og:description" value="Chatroom for Nullify GTA V menu">
-	<meta name="og:title" value="Nullify Chatroom">
-	<meta name="description" value="Chatroom for Nullify GTA V menu">
+    {{#if info.url}} <meta name="og:url" content="{{info.url}}">{{/if}}
+	<meta name="og:description" value="{{info.description}}">
+	<meta name="og:title" value="{{info.title}}">
+	<meta name="description" value="{{info.description}}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 </head>
@@ -20,7 +20,7 @@
 
 <div id='chat_container'>
     <ul  id='chat_list' class="list-group text-dark">
-        <li class="list-group-item chat list-group-item-info"><b class="mb-1">[Server]</b> {{welcome}}</li>
+        <li class="list-group-item chat list-group-item-info"><b class="mb-1">[Server]</b> {{info.welcome_msg}}</li>
     </ul>   
 </div>
   
