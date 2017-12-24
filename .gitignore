@@ -25,6 +25,7 @@ typings/
 .env
 .vscode
 *.example
+nodemon.json
 
 changelog.json
 config/

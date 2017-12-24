@@ -7,5 +7,6 @@
     },
     "db":{
         
-    }
+    },
+    "welcome_msg":"Welcome! I should probably change this msg, but nah"
 }

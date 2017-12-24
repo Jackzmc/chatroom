@@ -21,6 +21,9 @@ html,body {
     margin-bottom: 0;
     padding: 5px;
     display:inline-block;
+    border: 3px solid #e9ecef!important;
+    background: black;
+    
 }
 
 #chat_list {
@@ -40,10 +43,15 @@ html,body {
 }
 
 .chat li.list-group-item {
-    margin:0px;
-    padding:0px;
+    margin:0px !important;
+    padding:0px !important;
     word-wrap:break-word;
+    margin-bottom:0px !important;
 }
+.chat > p {
+    margin-bottom: 0px;
+}
+
 
 .sidenav {
     height: 100%; /* 100% Full-height */
@@ -107,4 +115,38 @@ a#channelButton:hover{
 }
 .current {
     font-weight: bold;
+}
+
+@-webkit-keyframes rainbow{
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}	
+}
+/* Internet Explorer */
+@-ms-keyframes rainbow{
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}	
+}
+
+/* Standar Syntax */
+@keyframes rainbow{
+	20%{color: red;}
+	40%{color: yellow;}
+	60%{color: green;}
+	80%{color: blue;}
+	100%{color: orange;}	
+}
+.rainbow {
+    -webkit-animation: rainbow 1s infinite; 
+  
+    /* Internet Explorer */
+    -ms-animation: rainbow 1s infinite;
+    
+    /* Standar Syntax */
+    animation: rainbow 1s infinite; 
 }

@@ -4,6 +4,7 @@ const favicon = require('serve-favicon');
 const path = require('path');
 
 const config = require('./config');
+const changelog = require('./changelog')
 const package = require('./package')
 //const config = require('config/' + (((process.env.NODE_ENV !== 'production')) ? 'dev.json' : 'production.json'));
 
@@ -39,7 +40,8 @@ app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')))
 app.use(express.static(__dirname + '/public'));
 app.use('/',(req,res) => {
 	//let ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
-	res.render('index',{version:package.version})
+	const changes = changelog[changelog.length-1].changes.map(v => `<li>${v}</li>`).join("\n")
+	res.render('index',{version:package.version,changes,welcome:config.welcome_msg})
 })
 
 app.get('*', function(req, res){
@@ -54,6 +56,14 @@ const chat = {
 	}
 }
 const users = [];
+const spamCheck = [];
+/* example 
+{
+	name:user,
+	lastmsg;new Date()
+}
+check if lastmsg < new Date() and some type of count
+*/
 io.sockets.on('connection', function (socket) { //server connection, not user connection(i think)
 	socket.emit('init',{
 		default_channel:available_rooms[0],
@@ -68,16 +78,28 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 			console.info(`[Log] ${socket.username} switched to #${room}`)
 			if(!chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
-				return socket.emit('message',{server:true,message:`Connected to #${room}`});
+				return socket.emit('message',{server:true,message:`Welcome to #${room}, there are no previous messages.`});
 			}
 			const lastmessages = chat[socket.room].messages.slice(chat[socket.room].messages.length - 5)
 			lastmessages.forEach(v => {
 				v.previous = true;
 				socket.emit('message',v)
 			})
+			if(room === 'test') {
+				for (let i = 0; i < 6; i++) {
+					let date = new Date(randomNumber(1990,2020),randomNumber(1,12),randomNumber(1,30),randomNumber(0,24),randomNumber(0,60))
+					socket.emit('message',{
+						user:`SAMPLE${i}`,
+						message:'This is a sample message, nerd. ',
+						timestamp:date
+					})
+					
+				}
+			}
+			
 			
 
-			socket.emit('message',{server:true,message:`Connected to #${room}`})
+			//socket.emit('message',{server:true,message:`Connected to #${room}`})
 			
 		}
 		return;
@@ -85,6 +107,13 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 	socket.on('join',function(data) {
 		data = escapeHtml(data);
 		socket.username = data;
+		let prevUser = users.filter(v=> socket.id === v.id);
+		if(prevUser.length > 0) {
+			return socket.emit('message',{
+				server:true,
+				message:'You have already joined. Stop it.'
+			})
+		}
 		users.push({
 			user: data,
 			id: socket.id
@@ -101,7 +130,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
   socket.on('message', function (message) { //get message from client, broadcast back to client... now that i realize it... i could just done broadcast clientside, but eh?
 		if(message.trim().length === 0) return false;
 		message = message.trim().slice(0,1000)
-		message = escapeHtml(message);
+		message = escapeHtml(message)
 		if(socket.username.toLowerCase() !== "server") {
 			if(available_rooms[socket.room] && !chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
@@ -136,6 +165,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		id: socket.id
 	});
 	users.splice(i, 1);
+	if(!socket.username) return;
 	console.log(`[Log] ${socket.username} left`);
 	//socket.broadcast.emit('message',data); //broadcast leave message
 	//disabled above, due to connected user list
@@ -155,3 +185,30 @@ function escapeHtml(text) {
 	.replace(/'/g, "&#039;");
 }
 
+
+const encryption = {
+	encode: (stringToBeEncrypted) => {
+		const key = this.randomString(20,true);
+		const cipher = crypto.createCipher('aes256', key);
+		let encryptedString = cipher.update(stringToBeEncrypted, 'utf8', 'hex');
+
+		encryptedString += cipher.final('hex');
+		return {
+			msg,
+			key
+		};
+	},
+	decode: (stringToBeDecrypted, key) => {
+		const decipher = crypto.createDecipher('aes256', key);
+		let decryptedString = decipher.update(stringToBeDecrypted, 'hex', 'utf8');
+		const finalDecryptedString = decryptedString += decipher.final('utf8');
+		return finalDecryptedString;
+	},
+	randomString: (stringLength,password) => {
+		const possible = (password) ? 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()+_-=}{[]|:;"/?.><,`~' : 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+		return new Array(stringLength).fill(1).reduce(previousValue => previousValue +possible.charAt(Math.floor(Math.random() * possible.length)),'');
+	} 
+}
+function randomNumber(min,max) {
+    return Math.floor(Math.random()*(max-min+1)+min);
+}

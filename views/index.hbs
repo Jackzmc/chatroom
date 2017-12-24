@@ -2,7 +2,8 @@
 <head>
     <!-- Written by Jackz (me@jackz.me) @ https://jackz.me -->
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
-	<link rel="stylesheet" href="/css/index.css">
+	<link rel='stylesheet' href='/css/simplebar.css'>
+    <link rel="stylesheet" href="/css/index.css">
     <script defer src="https://use.fontawesome.com/releases/v5.0.2/js/all.js"></script>
     <link rel="shortcut icon" type"image/png" href="favicon.png">
     <title>Nullify Chat V{{version}}</title>
@@ -18,21 +19,23 @@
 <br>
 
 <div id='chat_container'>
-    <ul id='chat_list' class="list-group text-dark"></ul>   
+    <ul  id='chat_list' class="list-group text-dark">
+        <li class="list-group-item chat list-group-item-info"><b class="mb-1">[Server]</b> {{welcome}}</li>
+    </ul>   
 </div>
   
 
 <div id='input_zone_parent'>
     <div id='input-zone'>
         <span id='info' class='border border-success'>Connecting...</span>
-        <input class="form-control" type="text" maxlength="2000" id="chatsend" placeholder="Send a message to #general" />
+        <textarea class="form-control" type="text" maxlength="2000" id="chatsend" placeholder="Send a message to #general"></textarea>
         
     </div>
 </div>
 <div class="toggleButtons">
     <a id='memberButton'  href="#memberlist" onclick="toggleNav('memberlist')"><i class="fas fa-users"></i></a><br>
     <a id='channelButton'  href="#channels" onclick="toggleNav('channels')"><i class="fas fa-hashtag"></i></a><br>
-    <a id='settingsBtn' href="#settings" onclick="toggleNav('settings',275)"><i class="fas fa-cog"></i></a>
+    <a id='settingsBtn' href="#settings" onclick="toggleNav('settings',250)"><i class="fas fa-cog"></i></a>
 </div>
 
 
@@ -48,27 +51,44 @@
     <div id='channelList' class="list-group text-dark"></div>
 </div>
 <div id="settings" class="sidenav text-center">
-    <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('settings',275)">&times;</a>
-    <h4 class='text-center'>Settings<h4>
-    <p>Work in progress</p>
-    <small>Disable sound effects with browser, sorry</small>
+    <a href="javascript:void(0)" class="closebtn" onclick="toggleNav('settings',250)">&times;</a>
+    <h4 class='text-center'>Settings</h4>
+    <p>Work In Progress</p><br>
+    <div class="form-check disabled">
+    <label class="form-check-label">
+        <input class="form-check-input" id='settings_compact' type="checkbox" value="" disabled>
+        Compact Mode (WIP)
+    </label>
+    </div>
+    <div class="form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" id='settings_notifications' checked type="checkbox" value="">
+        Notifications
+    </label>
+    </div>
+    <div class="form-check">
+    <label class="form-check-label">
+        <input class="form-check-input" id='settings_sounds' checked type="checkbox" value="">
+        Sound Notifications
+    </label>
+    </div>
     <br><br>
-    <h5>Changelog</h5>
+    <h5>Changelog for V{{version}}</h5>
     <ul class='align-left'>
-        <li>Added channels & switching</li>
-        <li>Settings navbar</li>
+        {{{changes}}}
     </ul>
 </div>
-
 <div class="alertify-logs"></div>
 	
 <!-- scripts -->
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/chance.min.js"></script>
+<script src='/js/simplebar.js'></script>
 <script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.6/dist/showdown.min.js"></script>
 <script src="https://cdn.rawgit.com/alertifyjs/alertify.js/v1.0.10/dist/js/alertify.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+<script src="/js/functions.js"></script>
 <script src="/js/index.js"></script>
 </body>
 </html>
