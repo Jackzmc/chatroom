@@ -58,24 +58,28 @@ async function sendMessage(message) {
     return true;
 }
 function processCommand(cmd,args) {
-	if(cmd == "users") {
-		return socket.emit('cmd','users');
-    }else if(cmd === "tableflip") {
-        let msg = args.join(" ");
-        msg = `${msg} (╯°□°）╯︵ ┻━┻`
-        return sendMessage(msg);
-    }else if(cmd === "unflip"){
-        let msg = args.join(" ");
-        msg = `${msg} ┬─┬﻿ ノ( ゜-゜ノ)`
-        return sendMessage(msg);
-    }else if(cmd === "shrug") {
-        let msg = args.join(" ");
-        msg = `${msg} \¯\\_(ツ)_/¯`
-        return sendMessage(msg);
-    }else if(cmd === "rainbow") {
-        return setInterval(() => {
-            $('*').addClass('rainbow')
-        },1000);
+    cmd = cmd.trim()
+    switch(cmd) {
+        case "users":
+            return socket.emit('cmd','users')
+            break;
+        case "tableflip":
+            msg = args.join(" ");
+            return sendMessage(`${msg} (╯°□°）╯︵ ┻━┻`)
+            break;
+        case "unflip":
+            msg = args.join(" ");
+            return sendMessage(`${msg} ┬─┬﻿ ノ( ゜-゜ノ)`)
+            break;
+        case "shrug":
+            msg = args.join(" ");
+            return sendMessage(`${msg} \¯\\_(ツ)_/¯`)
+            break;
+        case "rainbow":
+            return setInterval(() => {
+                $('*').addClass('rainbow')
+            },1000);
+            break;
     }
 }
 function autoSave() {
