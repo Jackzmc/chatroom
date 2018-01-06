@@ -1,5 +1,6 @@
 
 const output = document.getElementById('chat_list');
+const title = document.title; //grab original
 const markdown = new showdown.Converter({
     noHeaderId:true,
     simplifiedAutoLink:true,
@@ -100,6 +101,10 @@ socket.on('cmd',(data) => {
 socket.on('message', (data) => {
     console.log(data)
     let user = (data.server) ? '[Server]':data.user;
+    document.title = '**New Chat Message**';
+    setInterval(() => {
+        document.title = title;
+    },2500)
     if(!document.hasFocus() && !data.previous && document.readyState == 'complete') {
         if(settings.notifications && Notification.permission === 'granted') {
             if(settings.sounds) {
