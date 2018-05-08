@@ -44,8 +44,11 @@ if(settings.notifications) {
 autoSave()
 
 $(document).ready(() => {  //get user logged in
-	//var userp = prompt("Please choose a username");
-    if(!user) user = prompt("Enter a nickname");
+    //var userp = prompt("Please choose a username");
+    if(!user) {
+        user = prompt("Enter a nickname");
+        setCookie("lastNickname",user);
+    }
     socket.emit('join',user)
     switchChannel(current_channel)
     alertify.logPosition('bottom right')

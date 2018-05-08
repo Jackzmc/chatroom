@@ -1,7 +1,7 @@
 {
-  "name": "nullify-chat",
-  "version": "1.6.0",
-  "description": "A chatroom for the mod menu Nullify",
+  "name": "jchatroom",
+  "version": "1.6.1",
+  "description": "A socket.io chat room with multiple channels",
   "main": "server.js",
   "dependencies": {
     "express": "^4.14.0",
@@ -12,8 +12,9 @@
     "serve-favicon": "^2.4.5",
     "socket.io": "~1.3.5"
   },
+  "homepage": "https://github.com/jackzmc/chatroom",
   "devDependencies": {},
-  "author": "Jackz me@jackz.me jackz.me",
+  "author": "Jackz <me@jackz.me> (jackz.me)",
   "license": "Apache-2.0",
   "keywords": [
     "chat",

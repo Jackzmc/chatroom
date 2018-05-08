@@ -4,7 +4,7 @@ const favicon = require('serve-favicon');
 const path = require('path');
 const fs = require('fs')
 
-const config = require('./config');
+const config = require('./config.json');
 const changelog = require('./changelog')
 const package = require('./package')
 //const config = require('config/' + (((process.env.NODE_ENV !== 'production')) ? 'dev.json' : 'production.json'));
