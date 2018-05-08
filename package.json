@@ -1,6 +1,6 @@
 {
   "name": "nullify-chat",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "description": "A chatroom for the mod menu Nullify",
   "main": "server.js",
   "dependencies": {
