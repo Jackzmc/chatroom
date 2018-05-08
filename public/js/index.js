@@ -17,9 +17,9 @@ if(!botCheck()) {
         reconnectionAttempts: 99999
     }); //Connect to server
 }
-console.info('Socket.io chatroom - Created by Jackz - Source: https://github.com/jackzmc/chatroom')
+console.info('Socket.io chatroom - Created by Jackz#7627 - Source: https://github.com/jackzmc/chatroom')
 alertify.parent(document.getElementById('alertify-logs'))
-let user;
+let user = getCookie("lastNickname");
 let connectedbefore = false; //check if user has been actually connected before (or HAS joined)
 let settings = {
     sounds:true,
@@ -45,7 +45,7 @@ autoSave()
 
 $(document).ready(() => {  //get user logged in
 	//var userp = prompt("Please choose a username");
-    user = chance.first();
+    if(!user) user = prompt("Enter a nickname");
     socket.emit('join',user)
     switchChannel(current_channel)
     alertify.logPosition('bottom right')
@@ -60,7 +60,6 @@ window.onbeforeunload = e => { //log user out
 }
 /*check if socket disconnect*/
 socket.on('connect',data => {
-    
 	if(connectedbefore){
         alertify.logPosition('bottom right')
         alertify.delay(10000)
@@ -81,7 +80,8 @@ socket.on('disconnect', data => {
 		.maxLogItems(1)
         .delay(0).error("Lost connection to server")
     $('#chatsend').prop("disabled", true); 
-    setTimeout(socket.connect(),5000)
+    console.debug('Lost connection, auto-reconnect in 10s');
+    setTimeout(socket.connect(),10000)
 
 });
 socket.on('init',data => {

@@ -76,7 +76,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 			socket.join(room)
 			socket.room = room;
 			if(available_rooms.indexOf(socket.room) === -1) return socket.emit('message',{server:true,error:true,message:'Specified channel does not exist'});
-			console.info(`[Log] ${socket.username} switched to #${room}`)
+			if(config.debug.channelSwitch) console.info(`[Log] ${socket.username} switched to #${room}`)
 			if(!chat[socket.room]) {
 				chat[socket.room] = {users:[],messages:[]};
 				return socket.emit('message',{server:true,message:`Welcome to #${room}, there are no previous messages.`});
@@ -120,7 +120,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 			id: socket.id
 		});
 
-		console.log(`[Log] ${data} joined`);
+		if(config.debug.joinquits) console.log(`[Log] ${data} joined`);
 		if(!socket.room || !available_rooms[socket.room]) return;
 		socket.emit('usercount',users);
 		
@@ -167,7 +167,7 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 	});
 	users.splice(i, 1);
 	if(!socket.username) return;
-	console.log(`[Log] ${socket.username} left`);
+	if(config.debug.joinquits) console.log(`[Log] ${socket.username} left`);
 	//socket.broadcast.emit('message',data); //broadcast leave message
 	//disabled above, due to connected user list
   });

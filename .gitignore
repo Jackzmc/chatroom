@@ -32,5 +32,6 @@ now.json
 
 nodemon.json
 config/
+config.json
 sessions
 img/loading.mp4
