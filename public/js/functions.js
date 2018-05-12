@@ -1,4 +1,5 @@
 let switchedChannelUsed = false; 
+
 function switchChannel(channel) {
     current_channel = channel;
     if(switchedChannelUsed) {
@@ -23,7 +24,16 @@ function updateChannelList() {
         element.innerHTML += `<a class="list-group-item list-group-item-action channel" href="#" onClick="switchChannel('${v}')">#${v}</a>`
     })
 }
-async function sendMessage(message) {
+async function sendMessage(message,toSelf) {
+    if(toSelf) {
+        message = escapeHtml(message)
+        message = markdown.makeHtml(message).replace(/\n/g,'<br>').replace(/(<\/?p>)/g,'').replace(/(<\/?h[1-6]>)/g,'').replace(/(href=['"](javascript|data|vbscript|file):)/,"href='#")
+        .replace(/(img )/g,"img width='50px' height='50px' ");
+        document.getElementById('chat_list').innerHTML +=
+        `<li class="list-group-item list-group-item-primary flex-column align-items-start chat"><p>${message}</p></li>`;
+    document.getElementById('chat_list').scrollTop = document.getElementById('chat_list').scrollHeight;
+        return;
+    }
     if(message.trim().length <= 0) return false;
     if(message.length > 1000) {
         console.warn('Message is too long, max 2000 characters');
@@ -38,6 +48,7 @@ async function sendMessage(message) {
         let response = await processCommand(command,args);
 
         if(response) return response;
+        return;
     }
     //message = escapeHtml(message.trim())
     //message = message = message.replace(/<[^>]+>/g, '');
@@ -54,7 +65,7 @@ async function sendMessage(message) {
     
     document.getElementById('chat_list').innerHTML +=
     `<li class="list-group-item list-group-item-success flex-column align-items-start chat"><div class="d-flex w-100 justify-content-between"><b class="mb-1">${user}</b> <small class="text-muted">now</small></div><p>${message}</p></li>`;
-    output.scrollTop = output.scrollHeight;
+    document.getElementById('chat_list').scrollTop = document.getElementById('chat_list').scrollHeight;
     return true;
 }
 function processCommand(cmd,args) {
@@ -79,6 +90,9 @@ function processCommand(cmd,args) {
             return setInterval(() => {
                 $('*').addClass('rainbow')
             },1000);
+            break;
+        case "help":
+            return sendMessage('/tableflip - (╯°□°）╯︵ ┻━┻\n/unflip ┬─┬﻿ ノ( ゜-゜ノ)\n/shrug \¯\\_(ツ)_/¯\n/rainbow',true)
             break;
     }
 }
@@ -184,6 +198,7 @@ const encryption = {
 }
 
 $("#chatsend").on('keyup', e => {
+    console.log('send')
     const element = document.getElementById('chatsend');
     setTimeout(function(){
         element.style.cssText = 'height:auto; padding:0';

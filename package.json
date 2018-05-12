@@ -4,6 +4,7 @@
   "description": "A socket.io chat room with multiple channels",
   "main": "server.js",
   "dependencies": {
+    "dotenv": "^5.0.1",
     "express": "^4.14.0",
     "express-handlebars": "^3.0.0",
     "node-json-db": "^0.7.3",

@@ -16,6 +16,11 @@
 	<meta name="description" value="{{info.description}}">
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+<script async src="/socket.io/socket.io.js"></script>
+<script defer src='/js/simplebar.js'></script>
+<script async src="https://cdn.rawgit.com/showdownjs/showdown/1.8.6/dist/showdown.min.js"></script>
+<script async src="https://cdn.rawgit.com/alertifyjs/alertify.js/v1.0.10/dist/js/alertify.js"></script>
 </head>
 <body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/please-wait/0.0.5/please-wait.min.js" integrity="sha256-VdpyBKkQpTaeKm6ZDxHfYXrnZKY6J+uMp0Ok1wq4Nn4=" crossorigin="anonymous"></script>
@@ -29,7 +34,7 @@
 <br>
 
 <div id='chat_container'>
-    <ul  id='chat_list' class="list-group text-dark">
+    <ul id='chat_list' class="list-group text-dark">
         <li class="list-group-item chat list-group-item-info"><b class="mb-1">[Server]</b> {{info.welcome_msg}}</li>
     </ul>   
 </div>
@@ -97,11 +102,6 @@
 <div class="alertify-logs"></div>
 	
 <!-- scripts -->
-<script src="/socket.io/socket.io.js"></script>
-<script src="/js/chance.min.js"></script>
-<script src='/js/simplebar.js'></script>
-<script src="https://cdn.rawgit.com/showdownjs/showdown/1.8.6/dist/showdown.min.js"></script>
-<script src="https://cdn.rawgit.com/alertifyjs/alertify.js/v1.0.10/dist/js/alertify.js"></script>
 <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
 <script src="/js/functions.js"></script>

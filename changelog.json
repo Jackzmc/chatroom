@@ -23,5 +23,12 @@
             "Added a loading screen",
             "Added img meta tag"
         ]
+    },
+    {
+        "version":"1.7.0",
+        "changes":[
+            "Persistent Chat",
+            "Nickname system"
+        ]
     }
 ]

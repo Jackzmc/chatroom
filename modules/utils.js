@@ -1,0 +1,2 @@
+require('dotenv').load();
+exports.r = require('rethinkdbdash')({host:process.env.DB_HOST,db:process.env.DB_DATABASE,port:process.env.DB_PORT||28015,user:process.env.DB_USER,password:process.env.DB_PASS,silent:false});

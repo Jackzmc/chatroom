@@ -24,7 +24,8 @@ let connectedbefore = false; //check if user has been actually connected before 
 let settings = {
     sounds:true,
     notifications:true,
-    compactMode:false
+    compactMode:false,
+    nick:null,
 }
 let rooms = [];
 let current_channel = getCookie("lastChannel")||'general';
@@ -46,9 +47,17 @@ autoSave()
 $(document).ready(() => {  //get user logged in
     //var userp = prompt("Please choose a username");
     if(!user) {
-        user = prompt("Enter a nickname");
-        setCookie("lastNickname",user);
+        console.log('Prompting user')
+        alertify.prompt("Enter a nickname",(val,ev) => {
+            ev.preventDefault();
+            user = val;
+        },(ev) => {
+            ev.preventDefault();
+            //
+        })
+        if(user) setCookie("lastNickname",user);
     }
+    if(!user) return;
     socket.emit('join',user)
     switchChannel(current_channel)
     alertify.logPosition('bottom right')
@@ -142,7 +151,7 @@ socket.on('message', (data) => {
         return true;
     }
     let time = new Date(data.timestamp)
-    let PMTime = time.getHours() >= 12
+    const PMTime = time.getHours() >= 12
     time = `${time.getFullYear()}-${time.getMonth()}-${time.getDate()} at ${time.getHours() % 12}:${time.getMinutes().toString().padStart(2,0)} ${(!PMTime)?'AM':'PM'}`;
     output.innerHTML += `<li class="list-group-item ${className} flex-column align-items-start chat"><div class="d-flex w-100 justify-content-between"><b class="mb-1">${user}</b>  <small class="text-muted">${time}</small></div><p>${message}</p></li>`;
     output.scrollTop = output.scrollHeight
@@ -159,4 +168,9 @@ socket.on('usercount', data => {
 	}
 	
 	document.getElementById('usercount').innerHTML = data.length;
+});
+$(window).scroll(function(){
+    if ($(window).scrollTop() == $(document).height()-$(window).height()){
+        alert("We're at the bottom of the page!!");
+    }
 });

@@ -6,15 +6,15 @@ const fs = require('fs')
 
 const config = require('./config.json');
 const changelog = require('./changelog')
-const package = require('./package')
+const package = require('./package');
 //const config = require('config/' + (((process.env.NODE_ENV !== 'production')) ? 'dev.json' : 'production.json'));
+const {r} = require('./modules/utils.js');
 
 const app = express();  
 const server = app.listen(config.port,() => {
 	console.info(`[Server] Running on port ${config.port}`)
 });
 const io = require('socket.io').listen(server);
-
 
 app.engine('.hbs', exphbs({
     // Specify helpers which are only registered on this instance.
@@ -48,15 +48,18 @@ app.use('/',(req,res) => {
 app.get('*', function(req, res){
     res.status(404).render('errors/404',{path:req.path,layout:false})
 });
+const available_rooms = config.channels;
 
-let available_rooms = ["general","test","support"];
-const chat = {
-	general:{
-		users:[],
-		messages:[]
-	}
+/*
+Chat DB
+{
+	channel:'name',
+	user:'nickname',
+	timestamp:Date.now(),
+	message:'message here'
 }
-const users = [];
+*/
+let users = [];
 const spamCheck = [];
 /* example 
 {
@@ -70,22 +73,22 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		default_channel:available_rooms[0],
 		channels:available_rooms
 	})
-	socket.on('channelSwitch',(room) => {
+	socket.on('channelSwitch',async (room) => {
 		if(available_rooms.indexOf(room) !== -1) {
 			socket.leave(socket.room);
 			socket.join(room)
 			socket.room = room;
 			if(available_rooms.indexOf(socket.room) === -1) return socket.emit('message',{server:true,error:true,message:'Specified channel does not exist'});
 			if(config.debug.channelSwitch) console.info(`[Log] ${socket.username} switched to #${room}`)
-			if(!chat[socket.room]) {
-				chat[socket.room] = {users:[],messages:[]};
-				return socket.emit('message',{server:true,message:`Welcome to #${room}, there are no previous messages.`});
-			}
-			const lastmessages = chat[socket.room].messages.slice(chat[socket.room].messages.length - 5)
-			lastmessages.forEach(v => {
+
+			let lastMessages = await r.table('chatroom').orderBy('timestamp').filter({channel:socket.room}).limit(5)
+			if(!lastMessages || lastMessages.length === 0) return socket.emit('message',{server:true,message:`Welcome to #${room}, there are no previous messages.`});
+			
+			lastMessages.forEach(v => {
 				v.previous = true;
 				socket.emit('message',v)
 			})
+			
 			if(room === 'test') {
 				for (let i = 0; i < 6; i++) {
 					let date = new Date(randomNumber(1990,2020),randomNumber(1,12),randomNumber(1,30),randomNumber(0,24),randomNumber(0,60))
@@ -97,11 +100,6 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 					
 				}
 			}
-			
-			
-
-			//socket.emit('message',{server:true,message:`Connected to #${room}`})
-			
 		}
 		return;
 	});
@@ -128,20 +126,22 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 		//disabled above, due to connected user list
 		
 	});
-  socket.on('message', function (message) { //get message from client, broadcast back to client... now that i realize it... i could just done broadcast clientside, but eh?
+  	socket.on('message', async (message) => { //get message from client, broadcast back to client... now that i realize it... i could just done broadcast clientside, but eh?
 		if(message.trim().length === 0) return false;
 		message = message.trim().slice(0,1000)
 		message = escapeHtml(message)
 		if(socket.username.toLowerCase() !== "server") {
-			if(available_rooms[socket.room] && !chat[socket.room]) {
-				chat[socket.room] = {users:[],messages:[]};
+			if(!available_rooms.includes(socket.room)) {
+				socket.room = available_rooms[0];
+				return socket.emit('message',{server:true,message:'Channel does not exist!'});			
 			}
-			chat[socket.room].messages.push({
+			await r.table('chatroom').insert({
 				user:socket.username,
+				channel:socket.room,
 				message,
-				timestamp:new Date()
+				timestamp:Date.now()
 			})
-			socket.broadcast.to(socket.room).emit('message',{user:socket.username,message,timestamp:new Date()})
+			socket.broadcast.to(socket.room).emit('message',{user:socket.username,message,timestamp:Date.now})
 			//chat.push(data); //stores message into variable that will reset on reload of node, currently only used for the last 5 messages on new user... should probably delete old ones... later
 		}
 		//socket.broadcast.emit('message',data);
