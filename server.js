@@ -88,18 +88,6 @@ io.sockets.on('connection', function (socket) { //server connection, not user co
 				v.previous = true;
 				socket.emit('message',v)
 			})
-			
-			if(room === 'test') {
-				for (let i = 0; i < 6; i++) {
-					let date = new Date(randomNumber(1990,2020),randomNumber(1,12),randomNumber(1,30),randomNumber(0,24),randomNumber(0,60))
-					socket.emit('message',{
-						user:`SAMPLE${i}`,
-						message:'This is a sample message, nerd. ',
-						timestamp:date
-					})
-					
-				}
-			}
 		}
 		return;
 	});
